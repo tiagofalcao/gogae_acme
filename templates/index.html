@@ -1,0 +1,57 @@
+{{define "header"}}
+  <link rel="import" href="/bower_components/paper-button/paper-button.html">
+  <link rel="import" href="/bower_components/paper-input/paper-input.html">
+  <link rel="import" href="/bower_components/iron-form/iron-form.html">
+
+{{end}}
+
+{{define "title"}}
+ACME Challenge
+{{end}}
+
+{{define "page"}}
+
+  <form is="iron-form" method="get" action="./acme-challenge-renew" id="formPost">
+
+      <paper-input id="challenge" label="Challenge" char-counter maxlength="254" value="{{.Challenge}}" required></paper-input>
+      <paper-input id="response" label="Response" char-counter maxlength="254" value="{{.Response}}" required></paper-input>
+
+    <div class="buttons">
+      <paper-button raised onclick="_submit(event)">Submit</paper-button>
+      <paper-button raised onclick="_reset(event)">Reset</paper-button>
+    </div>
+  </form>
+  <script>
+    var formPost = document.getElementById('formPost');
+    function _submit(event) {
+      formPost.submit();
+    }
+    function _reset(event) {
+      formPost.reset();
+    }
+
+    formPost.addEventListener('iron-form-presubmit', addPresubmit);
+    formPost.addEventListener('iron-form-response', addResponse);
+    formPost.addEventListener('iron-form-error', addError);
+
+    function addPresubmit(event) {
+      this.request.method = "PUT";
+      this.request.contentType = "application/json";
+      this.request.handleAs = "json";
+      this.request.body =
+        {
+          "Challenge" : document.getElementById('challenge').value,
+          "Response" : document.getElementById('response').value
+        };
+    }
+
+    function addResponse(event) {
+      location.reload();
+    }
+
+    function addError(event) {
+    }
+  </script>
+
+
+{{end}}
